@@ -1,19 +1,18 @@
-import { useState, useEffect } from "react";
-import "./App.css";
+import React, { useState, useEffect } from "react";
+
 function App() {
   const [time, setTime] = useState(0);
-  const [running, setRunning] = useState(0);
+  const [running, setRunning] = useState(false);
 
   useEffect(() => {
-    let timer;
+    let timer = null;
     if (running) {
       timer = setInterval(() => {
         setTime((prevTime) => prevTime + 1);
-      });
-    } else if (!running) {
-      clearInterval(timer);
+      }, 1000);
+    } else {
+      clearInterval(timer); // Clear interval when not running
     }
-
     return () => clearInterval(timer);
   }, [running]);
 
@@ -22,23 +21,28 @@ function App() {
   };
 
   const handleReset = () => {
-    setTime(0);
     setRunning(false);
+    setTime(0);
   };
 
-  const formatTime = () => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
+
   return (
     <div className="container">
-      <h1>Stop Watch</h1>
+      <h1>Stopwatch</h1>
       <div>
-        <span>Time :{formatTime(time)}</span>
+        <span>Time: {formatTime(time)}</span>
       </div>
 
-      <button onClick={handleStartStop}>{running ? "Stop" : "Start"}</button>
+      {running ? (
+        <button onClick={handleStartStop}>Stop</button>
+      ) : (
+        <button onClick={handleStartStop}>Start</button>
+      )}
       <button onClick={handleReset}>Reset</button>
     </div>
   );
